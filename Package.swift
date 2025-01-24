@@ -23,7 +23,10 @@ let package = Package(
                 "LoveLangCore"
             ]),
         .executableTarget(
-            name: "LoveLangCLI"),
+            name: "LoveLangCLI",
+            dependencies: [
+                "LoveLangCore"
+            ]),
 
     ]
 )

@@ -19,7 +19,8 @@ public class Lexer {
         self.input = input
         self.currentIndex = input.startIndex
         self.nextReadIndex = input.startIndex
-        self.currentCharacter = input[input.startIndex]
+        self.currentCharacter = .eof
+        advance()
     }
 
     public func nextToken() -> Token {
@@ -27,7 +28,6 @@ public class Lexer {
 
         // Check if single character token
         if let punctuationCharacter = PunctuationType(rawValue: String(currentCharacter)) {
-            print("Found punctuation \(punctuationCharacter)")
             advance()
             return .punctuation(punctuationCharacter)
         }
@@ -39,7 +39,6 @@ public class Lexer {
             let combinedCharacters = String(currentCharacter) + String(nextCharacter)
 
             if let multiCharacterOperator = OperatorType(rawValue: combinedCharacters) {
-                print("Found multi-character operator: \(multiCharacterOperator)")
                 // Consume the current character
                 advance()
                 // Consume the next character
@@ -49,7 +48,6 @@ public class Lexer {
         }
 
         if let operatorCharacter = OperatorType(rawValue: String(currentCharacter)) {
-            print("Found operator \(operatorCharacter)")
             advance()
             return .operator(operatorCharacter)
         }
@@ -73,7 +71,6 @@ public class Lexer {
             }
 
             guard let parsedInt = Int(number) else {
-                print("Could not convert \(number) to Integer")
                 return .eof
             }
 
@@ -84,23 +81,22 @@ public class Lexer {
     }
 
     private func advance() {
-        guard nextReadIndex < input.endIndex else {
-            print("Reached end of input: \(input)")
-            currentCharacter = .eof
-            return
+        if nextReadIndex >= input.endIndex {
+            currentCharacter = .eof  // Update the current index to point to currently read character
+            currentIndex = nextReadIndex
+            // Increment next read index
+            // nextReadIndex = input.index(after: nextReadIndex)
+        } else {
+            currentCharacter = input[nextReadIndex]
+            // Update the current index to point to currently read character
+            currentIndex = nextReadIndex
+            // Increment next read index
+            nextReadIndex = input.index(after: nextReadIndex)
         }
-
-        currentCharacter = input[nextReadIndex]
-        // Update the current index to point to currently read character
-        currentIndex = nextReadIndex
-        // Increment next read index
-        nextReadIndex = input.index(after: nextReadIndex)
-        print("Current character: \(currentCharacter)")
     }
 
     private func peekCharacter() -> Character {
         guard nextReadIndex < input.endIndex else {
-            print("No further input")
             return .eof
         }
 
@@ -112,7 +108,6 @@ public class Lexer {
 
         let startIndex = currentIndex
         while currentCharacter.isLetter {
-            print("Current character: \(currentCharacter) is a letter")
             advance()
         }
 
@@ -134,7 +129,6 @@ public class Lexer {
 
     private func skipWhitespace() {
         while currentCharacter.isWhitespaceOrNewline {
-            print("Skipping whitespace")
             advance()
         }
     }

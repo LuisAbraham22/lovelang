@@ -21,8 +21,20 @@ struct LexerTests {
 
         for expectedToken in expectedTokens {
             let nextToken = lexer.nextToken()
-
+            print(nextToken)
             #expect(expectedToken == nextToken)
+        }
+    }
+
+    @Test
+    func nextToken_indentifiers() {
+        let input = "let func return"
+        let lexer = Lexer(input: input)
+
+        while true {
+            let token = lexer.nextToken()
+            print(token)
+            if token == .eof { break }
         }
     }
 
