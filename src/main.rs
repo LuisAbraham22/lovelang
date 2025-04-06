@@ -1,6 +1,7 @@
 use lexer::Lexer;
 use token::Token;
 
+mod cursor;
 mod lexer;
 mod token;
 

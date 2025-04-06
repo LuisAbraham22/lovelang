@@ -1,5 +1,3 @@
-use crate::lexer;
-
 pub trait FromLexeme: Sized {
     fn from_lexeme(lexeme: &str) -> Option<Self>;
 }

@@ -1,29 +1,20 @@
-use std::{iter::Peekable, str::Chars};
-
-use crate::token::{FromLexeme, OperatorType, PunctuationType, Token};
+use super::cursor::Cursor;
+use super::token::{FromLexeme, OperatorType, PunctuationType, Token};
 
 pub struct Lexer<'a> {
-    input: Peekable<Chars<'a>>,
+    cursor: Cursor<'a>,
 }
 
 // Need to specify that implementations are valid for the same lifetime as the structs lifetimes
 impl<'a> Lexer<'a> {
     pub fn new(input: &'a str) -> Self {
         Self {
-            input: input.chars().peekable(),
+            cursor: Cursor::new(input),
         }
     }
 
-    fn read_char(&mut self) -> Option<char> {
-        self.input.next()
-    }
-
-    fn peek_char(&mut self) -> Option<&char> {
-        self.input.peek()
-    }
-
     pub fn next_token(&mut self) -> Token {
-        let current_char = match self.read_char() {
+        let current_char = match self.cursor.read_char() {
             None => return Token::Eof,
             Some(ch) => ch,
         };
@@ -35,15 +26,12 @@ impl<'a> Lexer<'a> {
         }
 
         // Check for multi character operator
-        let next_char = self.peek_char();
+        let next_char = self.cursor.peek_char();
         if let Some(next_ch) = next_char {
-            let mut combined_str =
-                String::with_capacity(current_char.len_utf8() + next_ch.len_utf8());
-            combined_str.push(current_char);
-            combined_str.push(*next_ch);
+            let combined_str = Self::concat_chars(&current_char, next_ch);
 
             if let Some(operator) = OperatorType::from_lexeme(&combined_str) {
-                _ = self.read_char();
+                _ = self.cursor.read_char();
 
                 return Token::Operator(operator);
             }
@@ -55,5 +43,13 @@ impl<'a> Lexer<'a> {
         }
 
         Token::Eof
+    }
+
+    fn concat_chars(a: &char, b: &char) -> String {
+        let mut combined_str = String::with_capacity(a.len_utf8() + b.len_utf8());
+        combined_str.push(*a);
+        combined_str.push(*b);
+
+        combined_str
     }
 }
