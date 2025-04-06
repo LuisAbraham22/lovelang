@@ -1,2 +1,0 @@
-# lovelang
-Interpreter for LoveLang
