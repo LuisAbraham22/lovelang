@@ -21,6 +21,7 @@ pub enum Token {
 pub enum PunctuationType {
     Comma,
     Semicolon,
+    Colon,
     LeftParen,
     RightParen,
     LeftBrace,
@@ -32,6 +33,7 @@ impl FromLexeme for PunctuationType {
         match lexeme {
             "," => Some(Self::Comma),
             ";" => Some(Self::Semicolon),
+            ":" => Some(Self::Colon),
             "(" => Some(Self::LeftParen),
             ")" => Some(Self::RightParen),
             "{" => Some(Self::LeftBrace),

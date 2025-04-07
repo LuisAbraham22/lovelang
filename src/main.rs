@@ -6,7 +6,7 @@ mod lexer;
 mod token;
 
 fn main() {
-    let input = String::from("=!+!=,;(){}");
+    let input = String::from("let x = 5; fn name(param: str) {}");
 
     let mut lexer = Lexer::new(&input);
 
